@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+      /* Add your CSS styling here */
+      .slider {
+        max-width: 300px;
+        position: relative;
+        overflow: hidden;
+        margin: auto;
+      }
+      .slides {
+        display: flex;
+        transition: 0.5s all;
+      }
+      .slide {
+        min-width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+      }
+      .slide img {
+        width: 100%;
+      }
+      .arrows {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        cursor: pointer;
+        z-index: 1;
+      }
+      .arrow-left {
+        left: 10px;
+      }
+      .arrow-right {
+        right: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="slider">
+      <div class="slides"></div>
+      <div class="arrows arrow-left">&#10094;</div>
+      <div class="arrows arrow-right">&#10095;</div>
+    </div>
+
+    <script>
+      // Add your data here
+      const images = [
+        {
+          name: "Image 1",
+          price: "$10",
+          src: "https://via.placeholder.com/300",
+        },
+        {
+          name: "Image 2",
+          price: "$20",
+          src: "https://via.placeholder.com/300",
+        },
+        {
+          name: "Image 3",
+          price: "$30",
+          src: "https://via.placeholder.com/300",
+        },
+      ];
+
+      const slider = document.querySelector(".slides");
+      const arrows = document.querySelectorAll(".arrows");
+      let counter = 1;
+      const slideCount = images.length;
+      const slideWidth = 100; // in percentage
+
+      // Populate the slider
+      images.forEach((image) => {
+        const slide = document.createElement("div");
+        slide.classList.add("slide");
+        const img = document.createElement("img");
+        img.src = image.src;
+        const nameElem = document.createElement("div");
+        nameElem.textContent = image.name;
+        const priceElem = document.createElement("div");
+        priceElem.textContent = image.price;
+        slide.appendChild(img);
+        slide.appendChild(nameElem);
+        slide.appendChild(priceElem);
+        slider.appendChild(slide);
+      });
+
+      function slide(direction) {
+        if (direction === "left") {
+          counter--;
+        } else if (direction === "right") {
+          counter++;
+        }
+
+        if (counter < 0) {
+          counter = slideCount - 1;
+        } else if (counter === slideCount) {
+          counter = 0;
+        }
+
+        slider.style.transition = "0.5s all";
+        slider.style.transform = `translateX(${-slideWidth * counter}%)`;
+      }
+
+      arrows.forEach((arrow) => {
+        arrow.addEventListener("click", (event) => {
+          const direction = event.target.classList.contains("arrow-left")
+            ? "left"
+            : "right";
+          slide(direction);
+        });
+      });
+
+      let touchStartX = 0;
+      let touchEndX = 0;
+
+      slider.addEventListener("touchstart", (event) => {
+        touchStartX = event.changedTouches[0].screenX;
+      });
+
+      slider.addEventListener("touchend", (event) => {
+        touchEndX = event.changedTouches[0].screenX;
+        handleGesture();
+      });
+
+      function handleGesture() {
+        if (touchEndX < touchStartX) {
+          slide("right");
+        }
+
+        if (touchEndX > touchStartX) {
+          slide("left");
+        }
+      }
+    </script>
+  </body>
+</html>
